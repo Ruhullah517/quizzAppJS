@@ -1,3 +1,4 @@
+
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
 
@@ -12,6 +13,19 @@ const firebaseConfig = {
     measurementId: "G-XQYYX88Y6F"
 };
 
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+
+// Initialize Firebase Cloud Messaging and get a reference to the service
+const messaging = getMessaging(app);
+getToken(messaging, { vapidKey: "BA89HiGbJ_O0mwGxgB5ZXRM-DncHY9k4S4cNMJmGCgVeKk2HeeoTfvjR3CYLd1SrHurB35QpehCDDND4MghsOPM" }).then((token) => {
+    if (token) {
+        console.log("TOken", token);
+    } else {
+        console.log("cant get token");
+    }
+});
 
 
 function requestPermission() {
@@ -19,23 +33,8 @@ function requestPermission() {
     Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
             console.log('Notification permission granted.');
-
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-
-
-            // Initialize Firebase Cloud Messaging and get a reference to the service
-            const messaging = getMessaging(app);
-            getToken(messaging, { vapidKey: "BA89HiGbJ_O0mwGxgB5ZXRM-DncHY9k4S4cNMJmGCgVeKk2HeeoTfvjR3CYLd1SrHurB35QpehCDDND4MghsOPM" }).then((token) => {
-                if (token) {
-                    console.log("TOken", token);
-                } else {
-                    console.log("cant get token");
-                }
-            });
-
-        } else {
-            console.log("dont have permission");
+        }else{
+            console.log("acess denied");
         }
     })
 };
