@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
-// import BGImage from "../public/images/photo-1557533046-154fc97b729f.jpg";
+
 
 
 export const GlobalStyle = createGlobalStyle`
@@ -7,9 +7,8 @@ html{
     height:100%;
 }
 body{
-    // background-image:url(images/photo-1557533046-154fc97b729f.jpg);
+    
     background-image:url(images/photo-1440778303588-435521a205bc.jpg);
-    // background-image:url(images/photo-1586902197503-e71026292412.jpg);
     background-size: cover;
     padding: 0 20px;
     margin:0;

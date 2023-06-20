@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import QuestionCard from './components/questionCard';
-import { FetchData } from './API';
-import { QuestionState, Difficulty } from './API';
+import { FetchData, QuestionType, Difficulty } from './API';
 import { GlobalStyle, Wrapper } from './App.styles';
+import './messaging_init_in_sw';
 
-export type AnswerObject = {
+export type AnswerType = {
   question: string;
   answer: string;
   correct: boolean;
@@ -14,22 +14,35 @@ export type AnswerObject = {
 const Total_Questions = 10;
 
 const App = () => {
+ 
+
+
+
+
   const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState<QuestionState[]>([]);
+  const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [number, setNumber] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
+  const [userAnswers, setUserAnswers] = useState<AnswerType[]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
 
   const startQuiz = async () => {
-    setNumber(0);
-    setLoading(true);
-    setGameOver(false);
-    const newQuestions = await FetchData(Total_Questions, Difficulty.EASY);
-    setQuestions(newQuestions);
-    setScore(0);
-    setUserAnswers([]);
-    setLoading(false);
+    try {
+      setNumber(0);
+      setLoading(true);
+      setGameOver(false);
+      const newQuestions = await FetchData(Total_Questions, Difficulty.EASY);
+      setQuestions(newQuestions);
+      setScore(0);
+      setUserAnswers([]);
+      setLoading(false);
+      localStorage.setItem("questions", JSON.stringify(newQuestions));
+    } catch (error) {
+      const collectionData: any = localStorage.getItem("questions");
+
+      setQuestions(JSON.parse(collectionData));
+      setLoading(false);
+    }
   };
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,7 +52,7 @@ const App = () => {
       if (correct) {
         setScore((prevScore) => prevScore + 1);
       }
-      const answerObject: AnswerObject = {
+      const answerObject: AnswerType = {
         question: questions[number].question,
         answer,
         correct,
@@ -58,6 +71,11 @@ const App = () => {
       <GlobalStyle />
       <Wrapper>
         <h1>Quiz App</h1>
+        {
+    (!navigator.onLine) &&
+      <div style={{color:'red'}}><b>You are offline! Please connect to the internet and try again.</b></div>
+    }
+        
         {(gameOver || userAnswers.length === Total_Questions) && (
           <button className="start" onClick={startQuiz}>
             {userAnswers.length === 0 ? 'Start' : 'Restart'}
@@ -86,3 +104,7 @@ const App = () => {
 };
 
 export default App;
+function getToken() {
+  throw new Error('Function not implemented.');
+}
+
