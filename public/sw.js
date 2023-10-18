@@ -1,6 +1,6 @@
 console.log("sw File in public");
 
-const CACHE_NAME = "version-1";
+const CACHE_NAME = "version-3";
 
 this.addEventListener('install', (event) => {
     event.waitUntil(
@@ -11,10 +11,14 @@ this.addEventListener('install', (event) => {
                 return cache.addAll([
 
                     "/static/js/bundle.js",
+                    "/static/js/main.js",
                     "/manifest.json",
-                    "/https://fonts.googleapis.com/css2?family=Catamaran:wght@700&family=Fascinate+Inline&display=swap",
+                    "https://fonts.googleapis.com/css2?family=Catamaran:wght@700&family=Fascinate+Inline&display=swap",
                     "/favicon.icon",
                     "/logo192.png",
+                    "/catamaran.css",
+                    "/favicon.ico",
+                    "/App.styles.ts",
                     "/images/photo-1440778303588-435521a205bc.jpg",
                     "https://fonts.gstatic.com/s/fascinateinline/v22/jVyR7mzzB3zc-jp6QCAu60poNqIy5grIfA.woff2",
                     "https://fonts.gstatic.com/s/catamaran/v18/o-0bIpQoyXQa2RxT7-5B6Ryxs2E_6n1iPJ_a5a7duw.woff2",
@@ -26,6 +30,18 @@ this.addEventListener('install', (event) => {
     )
 });
 
+this.addEventListener('activate', function (event) {
+    // console.log('activated');
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            // console.log(keys);
+            return Promise.all(
+                keys.filter(key => key !== CACHE_NAME)
+                    .map(key => caches.delete(key))
+            )
+        })
+    )
+})
 
 this.addEventListener('fetch', function (event) {
     // console.log("url", event.request.url);
@@ -58,22 +74,3 @@ this.addEventListener('fetch', function (event) {
 });
 
 
-// Activate the service worker
-// only keeps the cache we need and delete rest of them
-// self.addEventListener('activate', (event) => {
-//     const cacheWhitelist = [];
-//     cacheWhitelist.push(CACHE_NAME);
-
-//     event.waitUntil(
-//         caches.keys().then((cacheNames) => Promise.all(
-//             cacheNames.map((cacheName) => {
-//                 if (!cacheWhitelist.includes(cacheName)) {
-//                     return caches.delete(cacheName);
-//                 }
-//             })
-//         )).catch((error) => {
-//             console.log("error: ", error);
-//         })
-
-//     )
-// });

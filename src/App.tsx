@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+
 import React, { useEffect, useState } from 'react';
 import QuestionCard from './components/questionCard';
 import { FetchData, QuestionType, Difficulty } from './API';
@@ -14,11 +16,6 @@ export type AnswerType = {
 const Total_Questions = 10;
 
 const App = () => {
- 
-
-
-
-
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [number, setNumber] = useState(0);
@@ -45,9 +42,12 @@ const App = () => {
     }
   };
 
+
+  const [ansSelected, setAnsSelected] = useState<boolean>(false);
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
       const answer = e.currentTarget.value;
+      setAnsSelected(true);
       const correct = questions[number].correct_answer === answer;
       if (correct) {
         setScore((prevScore) => prevScore + 1);
@@ -64,6 +64,7 @@ const App = () => {
 
   const nextQuestion = () => {
     setNumber((prevNumber) => prevNumber + 1);
+    setAnsSelected(false);
   };
 
   return (
@@ -71,11 +72,12 @@ const App = () => {
       <GlobalStyle />
       <Wrapper>
         <h1>Quiz App</h1>
-        {
-    (!navigator.onLine) &&
-      <div style={{color:'red'}}><b>You are offline! Please connect to the internet and try again.</b></div>
-    }
         
+        {
+          (!self.navigator.onLine) &&
+          <div style={{ color: 'red' }}><b>You are offline! Please connect to the internet and try again.</b></div>
+        }
+
         {(gameOver || userAnswers.length === Total_Questions) && (
           <button className="start" onClick={startQuiz}>
             {userAnswers.length === 0 ? 'Start' : 'Restart'}
@@ -93,7 +95,7 @@ const App = () => {
             callback={checkAnswer}
           />
         )}
-        {!gameOver && !loading && userAnswers.length >= 1 && number !== Total_Questions - 1 && (
+        {!gameOver && !loading && userAnswers.length >= 1 && ansSelected == true && number !== Total_Questions - 1 && (
           <button className="next" onClick={nextQuestion}>
             Next
           </button>
